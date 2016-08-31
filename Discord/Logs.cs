@@ -8,7 +8,7 @@ namespace Discord
 {
     class Logs
     {
-        public string Time { get; set; }
+        public string Date { get; set; }
         public string User { get; set; }
         public string Logged { get; set; }
              
