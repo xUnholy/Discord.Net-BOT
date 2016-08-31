@@ -13,14 +13,16 @@ namespace Discord
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
 
-
         private DiscordClient _client;
+
         public BotConnect()
         {
+            var botToken = "MjIwNTAzODU2MjA1OTIyMzA0.CqhPzA.qpdc9mkxOJLrhpICJ0QMzTGKx6A";
+
             _client = new DiscordClient(x =>
             {
-                x.AppName = "Ethereal";
-                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220396497009770497&scope=bot&permissions=0";
+                x.AppName = "Ethereal Discord Bot";
+                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220503856205922304&scope=bot&permissions=0";
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
@@ -32,13 +34,11 @@ namespace Discord
                 x.HelpMode = HelpMode.Public;
             });
 
-            var token = "<Enter Token>"; 
-
             CreateCommands();
 
             _client.ExecuteAndWait(async () =>
             {
-                await _client.Connect(token);
+                await _client.Connect(botToken);
             });
         }
 
@@ -47,50 +47,50 @@ namespace Discord
             var cService = _client.GetService<CommandService>();
 
             cService.CreateCommand("report")
-                .Description("-- Report An Issue With Ethereal Bot")
+                .Description("Use this function to report an error or bug with Ethereal Bot")
+                .Parameter("ReportedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
-                    await e.Channel.SendMessage($"{e.User.Mention} : Thank you for your report!");
+                    await e.Channel.SendMessage($"{e.User.Mention} Thank you for your report!");
                     MyErrorLogs.Add(new Logs()
                     {
-                        Time = $"{DateTime.Now.Date.ToString($"dd/MM/yyyy")}",
+                        Date = $"{DateTime.Now.Date.ToString($"dd.MM.yy")}",
                         User = $"{e.User}",
-                        Logged = $"{e.Message.Text}"
+                        Logged = $"{e.GetArg("ReportedMessage")}"
                     });
                 });
 
             cService.CreateCommand("request")
-                .Description("Request A Feature In Ethereal Bot")
-                .Parameter("RequestedMessage", ParameterType.Unparsed)  //how to make this accept "!request bla bla"
+                .Description("Use this function to request a new feature or modification to Ethereal Bot")
+                .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
-                        await e.Channel.SendMessage($"{e.User.Mention} : Thank you for your request!");
-                        MyRequestLogs.Add(new Logs()
-                        {
-                            Time = $"{DateTime.Now.Date.ToString($"dd/MM/yyyy")}",
-                            User = $"{e.User}",
-                            Logged = $"{e.Message.Text}"
-                        });                 
+                    await e.Channel.SendMessage($"{e.User.Mention} Thank you for your request!");
+                    MyRequestLogs.Add(new Logs()
+                    {
+                        Date = $"{DateTime.Now.Date.ToString($"dd.MM.yy")}",
+                        User = $"{e.User}",
+                        Logged = $"{e.GetArg("RequestedMessage")}"
+                    });                 
                 });
 
             cService.CreateCommand("reportlog")
-                .Description("This Will List All Logged Errors")
+                .Description("Receive a PM with the current list of reported bugs & errors")
                 .Do(async (e) =>
-                {   
+                {
                     foreach (var log in MyErrorLogs)
                     {
-                        await e.User.SendMessage($"{log.Time + " *" + log.User +"* **Error** -- "+ log.Logged}");
+                        await e.User.SendMessage($"[{log.Date + "] [" + log.User +"] [Error] -- "+ log.Logged}");
                     }
-                     
                 });
 
             cService.CreateCommand("requestlog")
-                .Description("This will list all logged requests")
+                .Description("Receive a PM with the current list of requested features and changes")
                 .Do(async (e) =>
                 {
                     foreach (var log in MyRequestLogs)
                     {
-                        await e.User.SendMessage($"{log.Time + " *" + log.User + "* **Request** -- " + log.Logged}");
+                        await e.User.SendMessage($"[{log.Date + "] [" + log.User + "] [Request] -- " + log.Logged}");
                     }
                 });
 
@@ -102,23 +102,33 @@ namespace Discord
                 });
 
             cService.CreateCommand("dump")
-              .Description("Dump Logs")
-              .Do(async (e) =>
-              {
-                  var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
-                  if (e.User.HasRole(singleRole))
-                  {
-                      await e.User.SendMessage($"All error logs have been dumped");
-                      string directory = @"c:\Users\Michael\Desktop\Dump.txt";
-                      using (StreamWriter file = new StreamWriter($"{directory }"))
-                      {
-                          foreach (var log in MyErrorLogs)
-                          {
-                              file.WriteLine($"{log.Time}  {log.User} -- {log.Logged}");
-                          }
-                      }
-                  }
-              });
+                .Description("Create a local dump of all logs gathered by the bot")
+                .Do(async (e) =>
+                {
+                    var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
+                    if (e.User.HasRole(singleRole))
+                    {
+                        await e.User.SendMessage($"All logs have been dumped in " + Environment.CurrentDirectory);
+                        string directory = (Environment.CurrentDirectory + @"\ErrorLog.txt");
+                        using (StreamWriter sw = new StreamWriter(directory))
+                        {
+                            foreach (var log in MyErrorLogs)
+                            {
+                                sw.WriteLine($"[{log.Date}] [{log.User}] [Error] -- {log.Logged}");
+                            }
+                            sw.Close();
+                        }
+                        directory = (Environment.CurrentDirectory + @"\RequestLog.txt");
+                        using (StreamWriter sw = new StreamWriter(directory))
+                        {
+                            foreach (var log in MyRequestLogs)
+                            {
+                                sw.WriteLine($"[{log.Date}] [{log.User}] [Request] -- {log.Logged}");
+                            }
+                            sw.Close();
+                        }
+                    }
+            });
         }
 
         public void Log(object sender, LogMessageEventArgs e)
