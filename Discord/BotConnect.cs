@@ -32,7 +32,7 @@ namespace Discord
                 x.HelpMode = HelpMode.Public;
             });
 
-            var token = "MjIwMzk2NDk3MDA5NzcwNDk3.CqftHA.tmC6GnM2c0bzK5LGSpsFLISLTLU"; 
+            var token = "<Enter Token>"; 
 
             CreateCommands();
 
