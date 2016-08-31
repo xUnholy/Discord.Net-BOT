@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Discord
                 x.HelpMode = HelpMode.Public;
             });
 
-            var token = "<Token Here>"; 
+            var token = "MjIwMzk2NDk3MDA5NzcwNDk3.CqftHA.tmC6GnM2c0bzK5LGSpsFLISLTLU"; 
 
             CreateCommands();
 
@@ -63,17 +64,13 @@ namespace Discord
                 .Parameter("RequestedMessage", ParameterType.Unparsed)  //how to make this accept "!request bla bla"
                 .Do(async (e) =>
                 {
-                    var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
-                    if (e.User.HasRole(singleRole))
-                    {
                         await e.Channel.SendMessage($"{e.User.Mention} : Thank you for your request!");
                         MyRequestLogs.Add(new Logs()
                         {
                             Time = $"{DateTime.Now.Date.ToString($"dd/MM/yyyy")}",
                             User = $"{e.User}",
                             Logged = $"{e.Message.Text}"
-                        });
-                    }
+                        });                 
                 });
 
             cService.CreateCommand("reportlog")
@@ -103,6 +100,29 @@ namespace Discord
                 {
                     await e.User.SendMessage($"This Bot Was Created By -- ***xUnholy***");
                 });
+
+            cService.CreateCommand("dump")
+              .Description("Dump Logs")
+              .Do(async (e) =>
+              {
+                    var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
+                  if (e.User.HasRole(singleRole))
+                  {
+                      await e.User.SendMessage($"This Bot Was Created By -- ***xUnholy***");
+                      string directory = @"c:\Users\Michael\Desktop";
+
+                      string serializationFile = Path.Combine(directory, "ErrorLogs.bin");
+
+                      using (Stream stream = File.Open(serializationFile, FileMode.Create))
+                      {
+
+                          var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+
+                          bformatter.Serialize(stream, MyErrorLogs);
+                      }
+
+                  }
+              });
         }
 
         public void Log(object sender, LogMessageEventArgs e)
