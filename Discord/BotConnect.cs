@@ -85,7 +85,7 @@ namespace Discord
                 });
 
             cService.CreateCommand("requestlog")
-                .Description("This Will List All Logged Requests")
+                .Description("This will list all logged requests")
                 .Do(async (e) =>
                 {
                     foreach (var log in MyRequestLogs)
@@ -95,32 +95,28 @@ namespace Discord
                 });
 
             cService.CreateCommand("about")
-                .Description("About This Bot")
+                .Description("About this bot")
                 .Do(async (e) =>
                 {
-                    await e.User.SendMessage($"This Bot Was Created By -- ***xUnholy***");
+                    await e.User.SendMessage($"This bot was created by -- ***xUnholy***");
                 });
 
             cService.CreateCommand("dump")
               .Description("Dump Logs")
               .Do(async (e) =>
               {
-                    var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
+                  var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
                   if (e.User.HasRole(singleRole))
                   {
-                      await e.User.SendMessage($"This Bot Was Created By -- ***xUnholy***");
-                      string directory = @"c:\Users\Michael\Desktop";
-
-                      string serializationFile = Path.Combine(directory, "ErrorLogs.bin");
-
-                      using (Stream stream = File.Open(serializationFile, FileMode.Create))
+                      await e.User.SendMessage($"All error logs have been dumped");
+                      string directory = @"c:\Users\Michael\Desktop\Dump.txt";
+                      using (StreamWriter file = new StreamWriter($"{directory }"))
                       {
-
-                          var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-
-                          bformatter.Serialize(stream, MyErrorLogs);
+                          foreach (var log in MyErrorLogs)
+                          {
+                              file.WriteLine($"{log.Time}  {log.User} -- {log.Logged}");
+                          }
                       }
-
                   }
               });
         }
