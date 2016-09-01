@@ -11,7 +11,7 @@ namespace Discord
 {
     class BotConnect
     {
-        public string Token = "MjIwMzk2NDk3MDA5NzcwNDk3.CqftHA.tmC6GnM2c0bzK5LGSpsFLISLTLU";
+        public string Token = "MjIwNTAzODU2MjA1OTIyMzA0.Cqlsxw.5IZsTr5VWz0H7VC4ihhJQnJ72oQ";
 
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
@@ -36,6 +36,31 @@ namespace Discord
             });
 
             _client.UsingPermissionLevels((u, c) => (int)GetPermissions(u, c));
+
+            //Welcome new users to the server
+            _client.UserJoined += (sender, e) =>
+            {
+                e.User.SendMessage("Welcome to the Ethereal Bot Discord Server!");
+                e.User.SendMessage("Please check out #announcements and #readme");
+            };
+
+            //Check if a user is staff, were offline, and now online, and greet them
+            _client.UserUpdated += (sender, e) =>
+            {
+                bool isStaff = false;
+                IEnumerable<Role> userRoles = e.After.Roles;
+                foreach (Role role in userRoles)
+                {
+                    if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
+                    {
+                        isStaff = true;
+                    }
+                }
+                if (e.After.LastOnlineAt != e.Before.LastOnlineAt && isStaff)
+                {
+                    e.After.SendMessage($"Welcome {e.After.Name}!");
+                }                
+            };
 
             CreateCommands();
 
@@ -155,7 +180,6 @@ namespace Discord
         {
             Console.WriteLine($"[{e.Severity}] [{e.Source}] {e.Message}");
         }
-
 
         private static PermissionLevel GetPermissions(User u, Channel c)
         {
