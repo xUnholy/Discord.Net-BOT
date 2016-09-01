@@ -10,7 +10,6 @@ namespace Discord
     {
         public string Date { get; set; }
         public string User { get; set; }
-        public string Logged { get; set; }
-             
+        public string Logged { get; set; }          
     }
 }

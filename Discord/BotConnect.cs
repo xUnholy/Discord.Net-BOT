@@ -16,8 +16,8 @@ namespace Discord
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
 
-
         private DiscordClient _client;
+
         public BotConnect()
         {
             _client = new DiscordClient(x =>
@@ -37,29 +37,23 @@ namespace Discord
 
             _client.UsingPermissionLevels((u, c) => (int)GetPermissions(u, c));
 
-            //Welcome new users to the server
-            _client.UserJoined += (sender, e) =>
+            _client.UserJoined += async (sender, e) =>
             {
-                e.User.SendMessage("Welcome to the Ethereal Bot Discord Server!");
-                e.User.SendMessage("Please check out #announcements and #readme");
+                await e.User.SendMessage("Welcome to the Ethereal Bot Discord Server!");
+                await e.User.SendMessage("Please check out #announcements and #readme");
             };
 
-            //Check if a user is staff, were offline, and now online, and greet them
-            _client.UserUpdated += (sender, e) =>
+            _client.UserUpdated += async (sender, e) =>
             {
-                bool isStaff = false;
-                IEnumerable<Role> userRoles = e.After.Roles;
-                foreach (Role role in userRoles)
-                {
-                    if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
-                    {
-                        isStaff = true;
-                    }
-                }
-                if (e.After.LastOnlineAt != e.Before.LastOnlineAt && isStaff)
-                {
-                    e.After.SendMessage($"Welcome {e.After.Name}!");
-                }                
+                if (e.Before.Status.Value == "offline" && e.After.Status.Value == "online")
+                { 
+                    IEnumerable<Role> userRoles = e.After.Roles;
+                    foreach (Role role in userRoles)
+                        if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
+                        {
+                            await e.Server.DefaultChannel.SendMessage($"Welcome {e.After.Name}!");
+                        }
+                }           
             };
 
             CreateCommands();
@@ -69,7 +63,7 @@ namespace Discord
                 await _client.Connect(Token);
             });
         }
-
+        
         public void CreateCommands()
         {
             var cService = _client.GetService<CommandService>();
@@ -142,6 +136,20 @@ namespace Discord
                 .Do(async (e) =>
                 {
                     await e.User.SendMessage($"This bot was created by -- ***xUnholy***");
+                });
+
+            cService.CreateCommand("kick")
+                .Description("Kick a user")
+                .Parameter("UserToKick", ParameterType.Required)
+                .MinPermissions((int)PermissionLevel.ServerModerator) //need kick permissions?
+                .Do(async (e) =>
+                {
+                    var _user = e.Channel.FindUsers(e.GetArg("UserToKick")).FirstOrDefault();
+                    if (_user != null)
+                    {
+                        await _user.Kick();
+                        await e.User.SendMessage($"Kicked: " + _user);
+                    }
                 });
 
             cService.CreateCommand("dump")
