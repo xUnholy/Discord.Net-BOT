@@ -11,7 +11,7 @@ namespace Discord
 {
     class BotConnect
     {
-        public string Token = "MjIwMzk2NDk3MDA5NzcwNDk3.CqftHA.tmC6GnM2c0bzK5LGSpsFLISLTLU";
+        public string Token = "MjIwMDY1OTQxMDY3NzkyMzg0.Cqmuxg.1abvg5Y3TCH7KdbAs725b8miMwU";
 
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
@@ -23,7 +23,7 @@ namespace Discord
             _client = new DiscordClient(x =>
             {
                 x.AppName = "Ethereal";
-                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220396497009770497&scope=bot&permissions=0";
+                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220065941067792384&scope=bot&permissions=0";
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
@@ -81,10 +81,10 @@ namespace Discord
 
             cService.CreateCommand("reportlog")
                 .Description("Receive a PM with the current list of reported bugs & errors")
-                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 210512518076956673)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
-                    if (e.Channel.Id == 210512518076956673)
+                    if (e.Channel.Id == 220286522543308801)
                     {
                         foreach (var log in MyErrorLogs)
                         {
@@ -105,9 +105,19 @@ namespace Discord
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
-                    foreach (var log in MyRequestLogs)
+                    if (e.Channel.Id == 220286522543308801)
                     {
-                        await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Request**] -- {log.Logged}");
+                        foreach (var log in MyRequestLogs)
+                        {
+                            await e.Channel.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                        }
+                    }
+                    else
+                    {
+                        foreach (var log in MyRequestLogs)
+                        {
+                            await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                        }
                     }
                 });
 
