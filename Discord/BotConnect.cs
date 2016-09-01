@@ -35,43 +35,38 @@ namespace Discord
                 x.HelpMode = HelpMode.Private;
             });
 
-            //Welcome new users to the server
-            _client.UserJoined += _client_UserJoined; 
+            _client.UserJoined += _client_UserJoined;
 
-            //Check if a user is staff, were offline, and now online, and greet them
             _client.UserUpdated += _client_UserOnline;
- 
+
             CreateCommands();
 
             _client.ExecuteAndWait(async () =>
             {
                 await _client.Connect(Token);
+                _client.SetGame("Visual Studio 2015", GameType.Twitch, "https://discord.gg/GTUbKSZ");
             });
         }
 
         private static async void _client_UserOnline(object sender, UserUpdatedEventArgs e)
         {
-            var isStaff = false;
-            var userRoles = e.After.Roles;
-            foreach (var role in userRoles)
+            if (e.Before.Status.Value == "offline" && e.After.Status.Value == "online")
             {
-                if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
+                var userRoles = e.After.Roles;
+                foreach (var role in userRoles)
                 {
-                    isStaff = true;
+                    if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader") || role.Name.Contains("Fearless Princess"))
+                    {
+                        await e.After.Server.DefaultChannel.SendMessage($"Welcome {e.After.Name}!");
+                    }
                 }
-            }
-            if (e.Before.Status.Value == "offline" && e.After.Status.Value == "online" && isStaff)
-            {
-                await e.After.SendMessage($"Welcome {e.After.Name}!");
             }
         }
 
         private static async void _client_UserJoined(object sender, UserEventArgs e)
         {
-            await e.User.SendMessage($"Welcome {e.User.Mention} to the Ethereal Bot Discord Server!" +
-                                     "\n" +
+            await e.User.SendMessage($"Welcome {e.User.Mention} to the Ethereal Bot Discord Server!" + "\n" +
                                      "\nPlease check out #announcements and #readme");
-
         }
 
         public void CreateCommands()
@@ -79,7 +74,7 @@ namespace Discord
             var cService = _client.GetService<CommandService>();
 
             cService.CreateCommand("report")
-                .Description("-- Report an issue with Ethereal Bot")
+                .Description("Use this function to report a new bug or error with Ethereal Bot")
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
                 .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
@@ -156,6 +151,21 @@ namespace Discord
                 .Do(async (e) =>
                 {
                     await e.User.SendMessage($"This bot was created by -- ***xUnholy***");
+                });
+
+            cService.CreateCommand("kick")
+                .Description("Kick a user")
+                .Parameter("UserToKick", ParameterType.Required)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
+                .MinPermissions((int)PermissionLevel.ChannelModerator) //need to verify permissions for kicking
+                .Do(async (e) =>
+                {
+                    var _user = e.Server.FindUsers(e.GetArg("UserToKick")).FirstOrDefault();
+                    if (_user != null)
+                    {
+                        await _user.Kick();
+                        await e.User.SendMessage($"Kicked: " + _user);
+                    }
                 });
 
             cService.CreateCommand("dump")
