@@ -10,6 +10,7 @@ namespace Discord
     {
         static void Main(string[] args)
         {
+            Console.Title = ("Ethereal Discord Bot");
             BotConnect Bot = new BotConnect();
         }
     }
