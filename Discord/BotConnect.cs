@@ -32,11 +32,10 @@ namespace Discord
             {
                 x.PrefixChar = '!';
                 x.AllowMentionPrefix = true;
-                x.HelpMode = HelpMode.Public;
-            })
-            .UsingPermissionLevels((u, c) => (int)GetPermissions(u, c));
+                x.HelpMode = HelpMode.Private;
+            });
 
-            var token = "MjIwMzk2NDk3MDA5NzcwNDk3.CqftHA.tmC6GnM2c0bzK5LGSpsFLISLTLU"; 
+            _client.UsingPermissionLevels((u, c) => (int)GetPermissions(u, c));
 
             CreateCommands();
 
@@ -52,7 +51,7 @@ namespace Discord
 
             cService.CreateCommand("report")
                 .Description("-- Report an issue with Ethereal Bot")
-                .AddCheck((c, u, ch) => ch.Id == 219997138841632769)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
                 .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
@@ -67,7 +66,7 @@ namespace Discord
 
             cService.CreateCommand("request")
                 .Description("Use this function to request a new feature or modification to Ethereal Bot")
-                .AddCheck((c, u, ch) => ch.Id == 219997138841632769)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
                 .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
@@ -82,19 +81,28 @@ namespace Discord
 
             cService.CreateCommand("reportlog")
                 .Description("Receive a PM with the current list of reported bugs & errors")
-                .AddCheck((c, u, ch) => ch.Id == 219997138841632769 /*|| ch.Id == 219997138841632769*/)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 210512518076956673)
                 .Do(async (e) =>
-                {   
-                    foreach (var log in MyErrorLogs)
+                {
+                    if (e.Channel.Id == 210512518076956673)
                     {
-                        await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                        foreach (var log in MyErrorLogs)
+                        {
+                            await e.Channel.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                        }
                     }
-                     
+                    else
+                    {
+                        foreach (var log in MyErrorLogs)
+                        {
+                            await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                        }
+                    }
                 });
 
             cService.CreateCommand("requestlog")
                 .Description("Receive a PM with the current list of requested features and changes")
-                .AddCheck((c, u, ch) => ch.Id == 219997138841632769 /*|| ch.Id == 219997138841632769*/)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
                     foreach (var log in MyRequestLogs)
@@ -105,7 +113,7 @@ namespace Discord
 
             cService.CreateCommand("about")
                 .Description("About this bot")
-                .AddCheck((c, u, ch) => ch.Id == 219997138841632769)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
                 .Do(async (e) =>
                 {
                     await e.User.SendMessage($"This bot was created by -- ***xUnholy***");
@@ -113,7 +121,7 @@ namespace Discord
 
             cService.CreateCommand("dump")
               .Description("Dump Logs")
-              .AddCheck((c, u, ch) => ch.Id == 219997138841632769)
+              .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
               .Do(async (e) =>
               {
                   var singleRole = e.Server.Roles.FirstOrDefault(x => x.Name == "Lead Developer");
