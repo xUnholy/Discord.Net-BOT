@@ -11,7 +11,7 @@ namespace Discord
 {
     class BotConnect
     {
-        public string Token = "MjIwMDY1OTQxMDY3NzkyMzg0.Cqmuxg.1abvg5Y3TCH7KdbAs725b8miMwU";
+        public string Token = "MjIwNTAzODU2MjA1OTIyMzA0.Cqlsxw.5IZsTr5VWz0H7VC4ihhJQnJ72oQ";
 
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
@@ -23,7 +23,7 @@ namespace Discord
             _client = new DiscordClient(x =>
             {
                 x.AppName = "Ethereal";
-                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220065941067792384&scope=bot&permissions=0";
+                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=220396497009770497&scope=bot&permissions=0";
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
@@ -36,6 +36,31 @@ namespace Discord
             });
 
             _client.UsingPermissionLevels((u, c) => (int)GetPermissions(u, c));
+
+            //Welcome new users to the server
+            _client.UserJoined += (sender, e) =>
+            {
+                e.User.SendMessage("Welcome to the Ethereal Bot Discord Server!");
+                e.User.SendMessage("Please check out #announcements and #readme");
+            };
+
+            //Check if a user is staff, were offline, and now online, and greet them
+            _client.UserUpdated += (sender, e) =>
+            {
+                bool isStaff = false;
+                IEnumerable<Role> userRoles = e.After.Roles;
+                foreach (Role role in userRoles)
+                {
+                    if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
+                    {
+                        isStaff = true;
+                    }
+                }
+                if (e.After.LastOnlineAt != e.Before.LastOnlineAt && isStaff)
+                {
+                    e.After.SendMessage($"Welcome {e.After.Name}!");
+                }                
+            };
 
             CreateCommands();
 
@@ -81,10 +106,10 @@ namespace Discord
 
             cService.CreateCommand("reportlog")
                 .Description("Receive a PM with the current list of reported bugs & errors")
-                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 210512518076956673)
                 .Do(async (e) =>
                 {
-                    if (e.Channel.Id == 220286522543308801)
+                    if (e.Channel.Id == 210512518076956673)
                     {
                         foreach (var log in MyErrorLogs)
                         {
@@ -105,19 +130,9 @@ namespace Discord
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
-                    if (e.Channel.Id == 220286522543308801)
+                    foreach (var log in MyRequestLogs)
                     {
-                        foreach (var log in MyRequestLogs)
-                        {
-                            await e.Channel.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
-                        }
-                    }
-                    else
-                    {
-                        foreach (var log in MyRequestLogs)
-                        {
-                            await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
-                        }
+                        await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Request**] -- {log.Logged}");
                     }
                 });
 
@@ -165,7 +180,6 @@ namespace Discord
         {
             Console.WriteLine($"[{e.Severity}] [{e.Source}] {e.Message}");
         }
-
 
         private static PermissionLevel GetPermissions(User u, Channel c)
         {
