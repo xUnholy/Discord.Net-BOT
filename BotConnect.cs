@@ -23,7 +23,7 @@ namespace Discord
             _client = new DiscordClient(x =>
             {
                 x.AppName = "Ethereal";
-                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=xxxxxxxxxxxxxxxxxx&scope=bot&permissions=0";
+                x.AppUrl = "https://discordapp.com/oauth2/authorize?client_id=xxxxxxxxxxxxxxxxxxx&scope=bot&permissions=0";
                 x.LogLevel = LogSeverity.Info;
                 x.LogHandler = Log;
             });
@@ -103,13 +103,6 @@ namespace Discord
                     });
                 });
 
-            cService.CreateCommand("getchan")
-                .Do(async (e) =>
-                {
-                    string chanId = e.Channel.Id.ToString();
-                    await e.User.SendMessage("Channel ID for #" + e.Channel + " is " + chanId);
-                });
-
             cService.CreateCommand("reportlog")
                 .Description("Receive a PM with the current list of reported bugs & errors")
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 210512518076956673)
@@ -172,6 +165,13 @@ namespace Discord
                         await _user.Kick();
                         await e.User.SendMessage($"Kicked: " + _user);
                     }
+                });
+
+            cService.CreateCommand("getchan")
+                .Do(async (e) =>
+                {
+                    string chanId = e.Channel.Id.ToString();
+                    await e.User.SendMessage("Channel ID for #" + e.Channel + " is " + chanId);
                 });
 
             cService.CreateCommand("dump")
