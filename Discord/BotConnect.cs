@@ -11,7 +11,7 @@ namespace Discord
 {
     class BotConnect
     {
-        public string Token = "<Token>";
+        public string Token = "MjIwMDY1OTQxMDY3NzkyMzg0.CqmyOw.OwaNjv6qUbTcFhwl3rxw1hWWQf4";
 
         public List<Logs> MyErrorLogs = new List<Logs>();
         public List<Logs> MyRequestLogs = new List<Logs>();
@@ -35,10 +35,8 @@ namespace Discord
                 x.HelpMode = HelpMode.Private;
             });
 
-            //Welcome new users to the server
             _client.UserJoined += _client_UserJoined; 
 
-            //Check if a user is staff, were offline, and now online, and greet them
             _client.UserUpdated += _client_UserOnline;
  
             CreateCommands();
@@ -46,32 +44,29 @@ namespace Discord
             _client.ExecuteAndWait(async () =>
             {
                 await _client.Connect(Token);
+                _client.SetGame("Pokémon GO™", GameType.Twitch, "https://discord.gg/GTUbKSZ");
             });
         }
 
         private static async void _client_UserOnline(object sender, UserUpdatedEventArgs e)
         {
-            var isStaff = false;
-            var userRoles = e.After.Roles;
-            foreach (var role in userRoles)
+            if (e.Before.Status.Value == "offline" && e.After.Status.Value == "online")
             {
-                if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader"))
+                var userRoles = e.After.Roles;
+                foreach (var role in userRoles)
                 {
-                    isStaff = true;
+                    if (role.Name.Contains("Lead Developer") || role.Name.Contains("Fearless Leader") || role.Name.Contains("Fearless Princess"))
+                    {
+                        await e.After.Server.DefaultChannel.SendMessage($"Welcome {e.After.Name}!");
+                    }
                 }
-            }
-            if (e.Before.Status.Value == "offline" && e.After.Status.Value == "online" && isStaff)
-            {
-                await e.After.SendMessage($"Welcome {e.After.Name}!");
             }
         }
 
         private static async void _client_UserJoined(object sender, UserEventArgs e)
         {
-            await e.User.SendMessage($"Welcome {e.User.Mention} to the Ethereal Bot Discord Server!" +
-                                     "\n" +
+            await e.User.SendMessage($"Welcome {e.User.Mention} to the Ethereal Bot Discord Server!" + "\n" +
                                      "\nPlease check out #announcements and #readme");
-
         }
 
         public void CreateCommands()
@@ -79,11 +74,12 @@ namespace Discord
             var cService = _client.GetService<CommandService>();
 
             cService.CreateCommand("report")
-                .Description("-- Report an issue with Ethereal Bot")
+                .Description("Use this function to report a new bug or error with Ethereal Bot")
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
                 .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
+                    string errorDirectory = $@"c:\Users\Michael\Desktop\DumpErrors-{DateTime.Now.Date.ToString($"dd/MM/yyyy")}.txt";
                     await e.Channel.SendMessage($"{e.User.Mention} Thank you for your report!");
                     MyErrorLogs.Add(new Logs()
                     {
@@ -91,6 +87,11 @@ namespace Discord
                         User = $"{e.User}",
                         Logged = $"{e.GetArg("RequestedMessage")}"
                     });
+                    using (var file = new StreamWriter($"{errorDirectory}"))
+                    {
+
+                        file.WriteLine($"[{DateTime.Now.Date.ToString("dd/MM/yyyy")}]  [{e.User}] -- {e.GetArg("RequestedMessage")}");                       
+                    }
                 });
 
             cService.CreateCommand("request")
@@ -99,6 +100,7 @@ namespace Discord
                 .Parameter("RequestedMessage", ParameterType.Unparsed)
                 .Do(async (e) =>
                 {
+                    string requestDirectory = $@"c:\Users\Michael\Desktop\DumpRequests-{DateTime.Now.Date.ToString($"dd / MM / yyyy")}.txt";
                     await e.Channel.SendMessage($"{e.User.Mention} Thank you for your request!");
                     MyRequestLogs.Add(new Logs()
                     {
@@ -106,14 +108,20 @@ namespace Discord
                         User = $"{e.User}",
                         Logged = $"{e.GetArg("RequestedMessage")}"
                     });
+                    using (var file = new StreamWriter($"{requestDirectory}"))
+                    {
+
+                        file.WriteLine($"[{DateTime.Now.Date.ToString("dd/MM/yyyy")}]  [{e.User}] -- {e.GetArg("RequestedMessage")}");
+                    }
+
                 });
 
             cService.CreateCommand("reportlog")
                 .Description("Receive a PM with the current list of reported bugs & errors")
-                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 210512518076956673)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
-                    if (e.Channel.Id == 210512518076956673)
+                    if (e.Channel.Id == 220286522543308801)
                     {
                         foreach (var log in MyErrorLogs)
                         {
@@ -134,19 +142,33 @@ namespace Discord
                 .AddCheck((c, u, ch) => ch.Id == 210512518076956673 || ch.Id == 220286522543308801)
                 .Do(async (e) =>
                 {
-                    if (e.Channel.Id == 210512518076956673)
+                    if (e.Channel.Id == 220286522543308801)
                     {
                         foreach (var log in MyRequestLogs)
                         {
-                            await e.Channel.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                            await e.Channel.SendMessage($"[{log.Date}] [*{log.User}*] [**Request**] -- {log.Logged}");
                         }
                     }
                     else
                     {
                         foreach (var log in MyRequestLogs)
                         {
-                            await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Error**] -- {log.Logged}");
+                            await e.User.SendMessage($"[{log.Date}] [*{log.User}*] [**Request**] -- {log.Logged}");
                         }
+                    }
+                });
+
+            cService.CreateCommand("kick")
+                .Description("Kick a user")
+                .Parameter("UserToKick", ParameterType.Required)
+                .AddCheck((c, u, ch) => ch.Id == 210512518076956673)
+                .Do(async (e) =>
+                {
+                    var _user = e.Server.FindUsers(e.GetArg("UserToKick")).FirstOrDefault();
+                    if (_user != null)
+                    {
+                        await _user.Kick();
+                        await e.User.SendMessage($"Kicked: " + _user);
                     }
                 });
 
@@ -169,7 +191,7 @@ namespace Discord
                   {
                       await e.User.SendMessage($"All error logs have been dumped");
 
-                      const string errorDirectory = @"c:\Users\Michael\Desktop\DumpErrors.txt";
+                      string errorDirectory = $@"c:\Users\Michael\Desktop\DumpErrors-{DateTime.Now.Date.ToString($"dd/MM/yyyy")}.txt";
                       using (var file = new StreamWriter($"{errorDirectory }"))
                       {
                           foreach (var log in MyErrorLogs)
@@ -178,7 +200,7 @@ namespace Discord
                           }
                           file.Close();
                       }
-                      const string requestDirectory = @"c:\Users\Michael\Desktop\DumpErrors.txt";
+                      string requestDirectory = $@"c:\Users\Michael\Desktop\DumpRequests-{DateTime.Now.Date.ToString($"dd/MM/yyyy")}.txt";
                       using (var file = new StreamWriter($"{requestDirectory }"))
                       {
                           foreach (var log in MyRequestLogs)
