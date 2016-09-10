@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Tasks;
 
 namespace Discord
 {
@@ -10,8 +11,8 @@ namespace Discord
     {
         static void Main(string[] args)
         {
-            Console.Title = ("Ethereal Discord Bot");
-            BotConnect Bot = new BotConnect();
+            Uptime uptime = new Uptime();
+            Connect bot = new Connect();
         }
     }
 }
