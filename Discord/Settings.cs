@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Discord
 {
-    class Settings
+    internal class Settings
     {
-        public string Token { get; set; }       = "MjI0MjQ5OTgwNzg3ODg0MDMy.CrXw5w.9XQhFLPR9CzLbPDDINkIoH6RmVI";
+        public string BotToken { get; set; }    = "MjIwMDY1OTQxMDY3NzkyMzg0.CrYoeg.MrMfqhE9K9Q1BH4zJeY5hk7J5CQ";
+        public string ClientToken { get; set; } = "Rk1guIslJH6MSk3i4XvZ7VcqRSSSi5hd";
         public string CurrentGame { get; set; } = "Pokémon GO™";
-        public string DiscordURL { get; set; }  = "https://discord.gg/GTUbKSZ";
+        public string DiscordUrl { get; set; }  = "https://discord.gg/GTUbKSZ";
         public char Prefix { get; set; }        = '!';
 
         public ulong[] Staff { get; set; }  =
@@ -35,19 +36,21 @@ namespace Discord
 
         public void CreateChannelList()
         {
-            Channels = new Dictionary<string, ulong>();
+            Channels = new Dictionary<string, ulong>
+            {
+                {"announcements", 210510987189682176},
+                {"readme", 210516791263363073},
+                {"general", 210511123416481793},
+                {"german-only", 210511123416481793},
+                {"farm-locations", 221429793361494017},
+                {"off-topic", 210511123416481793},
+                {"donators_chat", 217687094749822977},
+                {"donators_release", 219856078450458624},
+                {"testing_feedback", 210512518076956673},
+                {"dev_tasks", 220286522543308801},
+                {"development_private", 211813818987315210}
+            };
 
-            Channels.Add("announcements", 210510987189682176);
-            Channels.Add("readme", 210516791263363073);
-            Channels.Add("general", 210511123416481793);
-            Channels.Add("german-only", 210511123416481793);
-            Channels.Add("farm-locations", 221429793361494017);
-            Channels.Add("off-topic", 210511123416481793);
-            Channels.Add("donators_chat", 217687094749822977);
-            Channels.Add("donators_release", 219856078450458624);
-            Channels.Add("testing_feedback", 210512518076956673);
-            Channels.Add("dev_tasks", 220286522543308801);
-            Channels.Add("development_private", 211813818987315210);
         }
     }
 }

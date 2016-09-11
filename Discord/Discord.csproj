@@ -79,6 +79,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotConnect.cs" />
+    <Compile Include="ClientConnect.cs" />
     <Compile Include="Logs.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Enums\Permissions.cs" />
