@@ -11,9 +11,15 @@ namespace Discord
     internal class Settings
     {
         public string BotToken { get; set; }    = "";
+<<<<<<< HEAD
         public string UserToken { get; set; }   = "";
         public string CurrentGame { get; set; } = "Pokémon GO™";
         public string DiscordUrl { get; set; }  = "https://discord.gg/GTUbKSZ";
+=======
+        public string ClientToken { get; set; } = "";
+        public string CurrentGame { get; set; } = "";
+        public string DiscordUrl { get; set; }  = "";
+>>>>>>> refs/remotes/origin/master
         public char Prefix { get; set; }        = '!';
 
         public ulong[] Staff { get; set; }  =
@@ -26,7 +32,11 @@ namespace Discord
             197924941616644097,     //My
         };
 
+<<<<<<< HEAD
         public Dictionary<string, ulong> Channels;
+=======
+        public static Dictionary<string, ulong> Channels;
+>>>>>>> refs/remotes/origin/master
 
         public void CreateChannelList()
         {
