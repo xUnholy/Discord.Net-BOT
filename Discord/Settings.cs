@@ -10,10 +10,10 @@ namespace Discord
 {
     internal class Settings
     {
-        public string BotToken { get; set; }    = "MjIwMDY1OTQxMDY3NzkyMzg0.CrYoeg.MrMfqhE9K9Q1BH4zJeY5hk7J5CQ";
-        public string ClientToken { get; set; } = "Rk1guIslJH6MSk3i4XvZ7VcqRSSSi5hd";
-        public string CurrentGame { get; set; } = "Pokémon GO™";
-        public string DiscordUrl { get; set; }  = "https://discord.gg/GTUbKSZ";
+        public string BotToken { get; set; }    = "";
+        public string ClientToken { get; set; } = "";
+        public string CurrentGame { get; set; } = "";
+        public string DiscordUrl { get; set; }  = "";
         public char Prefix { get; set; }        = '!';
 
         public ulong[] Staff { get; set; }  =
@@ -24,12 +24,6 @@ namespace Discord
             122000111915106305,     //Xi Cynx
             208813305169575936,     //Raitaru
             197924941616644097,     //Mysticales
-        };
-
-        public ulong[] Coords { get; set; } =                                   //Format: Server ID, Channel ID, User ID
-        {
-            208945864343814145,209002390257532938,220565708499582976,           //NemesisBot
-            211288195462201347,221820148162494464,210568514484961280            //PokeSnipers
         };
 
         public static Dictionary<string, ulong> Channels;
