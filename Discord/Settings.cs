@@ -10,8 +10,9 @@ namespace Discord
 {
     internal class Settings
     {
-        public string BotToken { get; set; }    = "MjIwMDY1OTQxMDY3NzkyMzg0.CrYoeg.MrMfqhE9K9Q1BH4zJeY5hk7J5CQ";
+        public string BotToken { get; set; }    = "MjIwMzk2NDk3MDA5NzcwNDk3.CrYxFA._g2bIDXcgM4g8REu4K56jPxBsL4";
         public string ClientToken { get; set; } = "Rk1guIslJH6MSk3i4XvZ7VcqRSSSi5hd";
+        public string ClientID { get; set; } = "220396497009770497";
         public string CurrentGame { get; set; } = "Pokémon GO™";
         public string DiscordUrl { get; set; }  = "https://discord.gg/GTUbKSZ";
         public char Prefix { get; set; }        = '!';

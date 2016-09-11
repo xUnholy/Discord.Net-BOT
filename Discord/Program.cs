@@ -14,14 +14,9 @@ namespace Discord
     {
         public static void Main(string[] args)
         {
-           BotConnect bot = new BotConnect(); //Login as Bot
-           ClientConnect clientBot = new ClientConnect(); //Login as Client TODO: Make client login function with bot client.
+           BotConnect bot = new BotConnect(); 
+           ClientConnect clientBot = new ClientConnect(); //TODO: Make client login function with bot client.
         } 
-
-
-
-
-       
 
         private async void _client_UserUpdated(object s, UserUpdatedEventArgs e)
         {
@@ -46,7 +41,6 @@ namespace Discord
                                      $"Please check out {e.Server.GetChannel(Settings.Channels["announcements"]).Mention} and " + 
                                      $"{e.Server.GetChannel(Settings.Channels["readme"]).Mention}");
         }
-
         /*private async void _client_MsgReceived(object s, MessageEventArgs e)
         {
             if (!e.Message.IsAuthor)
@@ -59,7 +53,5 @@ namespace Discord
                 Console.WriteLine(msg);
             }
         }*/
-
-
     }
 }

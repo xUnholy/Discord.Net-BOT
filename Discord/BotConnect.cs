@@ -51,7 +51,7 @@ namespace Discord
                     {
                         await _client.Connect(_config.BotToken, TokenType.Bot);
                         _client.SetGame(_config.CurrentGame, GameType.Twitch, _config.DiscordUrl);
-                        return;
+                        break;
                     }
                     catch (Exception ex)
                     {
