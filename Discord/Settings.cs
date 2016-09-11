@@ -11,22 +11,32 @@ namespace Discord
     internal class Settings
     {
         public string BotToken { get; set; }    = "";
+<<<<<<< HEAD
+        public string UserToken { get; set; }   = "";
+        public string CurrentGame { get; set; } = "Pokémon GO™";
+        public string DiscordUrl { get; set; }  = "https://discord.gg/GTUbKSZ";
+=======
         public string ClientToken { get; set; } = "";
         public string CurrentGame { get; set; } = "";
         public string DiscordUrl { get; set; }  = "";
+>>>>>>> refs/remotes/origin/master
         public char Prefix { get; set; }        = '!';
 
         public ulong[] Staff { get; set; }  =
         {
-            179135233726087168,     //Michael
-            207193860797890560,     //exverse
-            206553736120762369,     //Wasabi
-            122000111915106305,     //Xi Cynx
-            208813305169575936,     //Raitaru
-            197924941616644097,     //Mysticales
+            179135233726087168,     //Mi
+            207193860797890560,     //ex
+            206553736120762369,     //Wa
+            122000111915106305,     //Xi
+            208813305169575936,     //Ra
+            197924941616644097,     //My
         };
 
+<<<<<<< HEAD
+        public Dictionary<string, ulong> Channels;
+=======
         public static Dictionary<string, ulong> Channels;
+>>>>>>> refs/remotes/origin/master
 
         public void CreateChannelList()
         {
@@ -44,7 +54,6 @@ namespace Discord
                 {"dev_tasks", 220286522543308801},
                 {"development_private", 211813818987315210}
             };
-
         }
     }
 }

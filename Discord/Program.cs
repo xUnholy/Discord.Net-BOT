@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using Discord.Enums;
+using Discord.Extensions;
 
 namespace Discord
 {
@@ -14,6 +15,10 @@ namespace Discord
     {
         public static void Main(string[] args)
         {
+<<<<<<< HEAD
+            BotConnect botConnect = new BotConnect();
+        }
+=======
            BotConnect bot = new BotConnect(); 
            ClientConnect clientBot = new ClientConnect(); //TODO: Make client login function with bot client.
         } 
@@ -53,5 +58,6 @@ namespace Discord
                 Console.WriteLine(msg);
             }
         }*/
+>>>>>>> refs/remotes/origin/master
     }
 }

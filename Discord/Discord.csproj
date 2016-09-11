@@ -80,7 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotConnect.cs" />
-    <Compile Include="ClientConnect.cs" />
+    <Compile Include="UserConnect.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Logs.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Enums\Permissions.cs" />
