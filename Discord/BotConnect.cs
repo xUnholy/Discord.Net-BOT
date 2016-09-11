@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,12 +53,8 @@ namespace Discord
                     {
                         await _client.Connect(_config.BotToken, TokenType.Bot);
                         _client.SetGame(_config.CurrentGame, GameType.Twitch, _config.DiscordUrl);
-<<<<<<< HEAD
                         UserConnect userConnect = new UserConnect();
                         return;
-=======
-                        break;
->>>>>>> refs/remotes/origin/master
                     }
                     catch (Exception ex)
                     {
