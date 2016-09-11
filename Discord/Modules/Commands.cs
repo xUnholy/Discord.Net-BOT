@@ -15,6 +15,7 @@ namespace Discord.Modules
     {
         private ModuleManager _manager;
         private DiscordClient _client;
+        private Settings _config;
 
         List<Logs> MyRequestLogs = new List<Logs>();
         List<Logs> MyErrorLogs = new List<Logs>();
@@ -29,7 +30,7 @@ namespace Discord.Modules
                 cmd.CreateCommand("report")
                     .Description("Use this function to report a new bug or error with Ethereal Bot")
                     .Parameter("Report", ParameterType.Unparsed)
-                    //.AddCheck((c, u, ch) => Settings.Channels.Contains(ch.Id))
+                    //.AddCheck((c, u, ch) => _config.Channels.Contains(ch.Id))
                     .Do(async (e) =>
                     {
                         if (e.GetArg("Report") != "")
@@ -39,7 +40,7 @@ namespace Discord.Modules
 
                 cmd.CreateCommand("request")
                     .Description("Use this function to request a new feature or modification to Ethereal Bot")
-                    //.AddCheck((c, u, ch) => Settings.Channels.Contains(ch.Id))
+                    //.AddCheck((c, u, ch) => _config.Channels.Contains(ch.Id))
                     .Parameter("RequestMsg", ParameterType.Unparsed)
                     .Do(async (e) =>
                     {
@@ -113,7 +114,7 @@ namespace Discord.Modules
                     .Description("Get information regarding where to download Ethereal bot")
                     .Do(async (e) =>
                     {
-                        await e.User.SendMessage($"Please see {e.Server.GetChannel(Settings.Channels["announcements"]).Mention} " +
+                        await e.User.SendMessage($"Please see {e.Server.GetChannel(_config.Channels["announcements"]).Mention} " +
                                                   "for details on the current release and where to get it");
                     });
 
@@ -134,7 +135,7 @@ namespace Discord.Modules
                         await e.User.SendMessage($"A WebUI version of Ethereal bot is currently in " +
                                                  $"development and will only be available to donators." + Environment.NewLine +
                                                  $"Updates will be posted in " +
-                                                 $"{e.Server.GetChannel(Settings.Channels["announcements"]).Mention}");
+                                                 $"{e.Server.GetChannel(_config.Channels["announcements"]).Mention}");
                     });
 
                 cmd.CreateCommand("pushbullet")
@@ -150,7 +151,7 @@ namespace Discord.Modules
                     .Description("Get information regarding encrypt.dll")
                     .Do(async (e) =>
                     {
-                        await e.User.SendMessage($"See {e.Server.GetChannel(Settings.Channels["readme"]).Mention} for details " + Environment.NewLine +
+                        await e.User.SendMessage($"See {e.Server.GetChannel(_config.Channels["readme"]).Mention} for details " + Environment.NewLine +
                                                  $"about where to get encrypt.dll." + Environment.NewLine + 
                                                  $"Please place in the same folder as your .exe");
                     });
@@ -168,19 +169,6 @@ namespace Discord.Modules
                       await e.User.SendMessage($"All logs have been dumped.");
                   });
             });
-        }
-    }
-
-    public static class StringExtensions
-    {
-        public static bool ContainsAny(this string input, params string[] str)
-        {
-            foreach (string toFind in str)
-            {
-                if (input.Contains(toFind))
-                    return true;
-            }
-            return false;
         }
     }
 }
